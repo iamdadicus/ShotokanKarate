@@ -84,6 +84,12 @@ Attacker: In ji-yu dachi
 
 Defender: In ji-yu dachi
 
+![](http://www.cfts-karate.co.uk/images/Set_Images/Jiyu_sets/2302.JPG)
+
+Attacker: Right mae-geri
+
+Defender: Migi gedan-barai
+
 ![](http://www.cfts-karate.co.uk/images/Set_Images/Jiyu_sets/2303.JPG)
 
 Defender: Hidari gyaku tate-shuto
