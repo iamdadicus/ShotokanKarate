@@ -103,3 +103,7 @@ Defender: Tate shuto/hikite gamae
 Bassai Dai	 
 
 https://youtu.be/E3AOtoeyKDo
+
+<img src="https://user-images.githubusercontent.com/15803819/54088430-ee408e00-4355-11e9-8bad-614fe4199105.jpg" width="600">
+
+
