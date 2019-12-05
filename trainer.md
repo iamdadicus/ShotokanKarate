@@ -221,7 +221,7 @@ $(function(){
 				//console.log(voice);
 			  var $option = $('<option>')
 			  .val(index)
-			  .html(voice.name + (voice.default ? ' (default)' :''))
+			  .html((voice.name || voice.voiceURI || voice.lang )+ (voice.default ? ' (default)' :''))
 			  .attr('data-lang', voice.lang)
 			  .attr('data-default_voice', voice.default);
 
