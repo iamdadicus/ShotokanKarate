@@ -21,7 +21,8 @@
 		<li>
 		  <div class="collapsible-header">Speech Rate and Pitch</div>
 		  <div class="collapsible-body">
-			<span>	
+			<span>
+	
 			  <div class="col s6">
 				<label>Rate</label>
 				<p class="range-field">
@@ -66,7 +67,7 @@
 		<a href="#" id="kumite" class="waves-effect waves-light btn">Kumite Test</a>
 	  </div>
 	  <div class="col s12">
-		<a href="#" id="speak/repeat" class="waves-effect waves-light btn">Speak</a>	
+		<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
 	  </div>	
 	</div>	
   </form>  
@@ -196,91 +197,110 @@ function getRandomKumite(){
 //https://codepen.io/SteveJRobertson/pen/emGWaR
 $(function(){
 
-$(document).ready(function(){
 	$('.collapsible').collapsible();
-});
 
-var slider = document.getElementById('test-slider');
-  noUiSlider.create(slider, {
-   start: [2, 20],
-   connect: true,
-   step: 1,
-   orientation: 'horizontal', // 'horizontal' or 'vertical'
-   range: {
-     'min': 0,
-     'max': 60
-   },
-   format: wNumb({
-     decimals: 0
-   })
-  });
-  
-  if ('speechSynthesis' in window) {
-    speechSynthesis.onvoiceschanged = function() {
-      var $voicelist = $('#voices');
+	var slider = document.getElementById('test-slider');
+	  noUiSlider.create(slider, {
+	   start: [2, 15],
+	   connect: true,
+	   step: 1,
+	   orientation: 'horizontal', // 'horizontal' or 'vertical'
+	   range: {
+		 'min': 0,
+		 'max': 60
+	   },
+	   format: wNumb({
+		 decimals: 0
+	   })
+	  });
+	  
+	  if ('speechSynthesis' in window) {
+	  
+		speechSynthesis.onvoiceschanged = function() {
+		  var $voicelist = $('#voices'),
+			  has_jp	 = false;
 
-      if($voicelist.find('option').length == 0) {
-        speechSynthesis.getVoices().forEach(function(voice, index) {
-          var $option = $('<option>')
-          .val(index)
-          .html(voice.name + (voice.default ? ' (default)' :''));
+		  if($voicelist.find('option').length == 0) {
+			speechSynthesis.getVoices().forEach(function(voice, index) {
+			
+				//console.log(voice);
+			  var $option = $('<option>')
+			  .val(index)
+			  .html(voice.name + (voice.default ? ' (default)' :''))
+			  .attr('data-lang', voice.lang)
+			  .attr('data-default_voice', voice.default);
 
-          $voicelist.append($option);
-        });
+				//is there a Japanese voice?
+			   if( voice.lang == 'ja-JP' ) has_jp = true;
+			   
+			  $voicelist.append($option);
+			});
 
-        $voicelist.material_select();
-      }
-    }
+		  //auto select japanese voice
+		  if( has_jp ){ 
+			$('option[data-lang="ja-JP"]', $voicelist).attr('selected', true);
+		  }
+		  else {
+			//selected default voice
+			$('option[data-default_voice="1"]', $voicelist).attr('selected', true);
+		  }
 
-    $('#speak').click(function(){
-	
-		var text = $('#message').val();
-		var msg = new SpeechSynthesisUtterance();
-		var voices = window.speechSynthesis.getVoices();
-		msg.voice = voices[$('#voices').val()];
-		msg.rate = $('#rate').val() / 10;
-		msg.pitch = $('#pitch').val();
-		msg.text = text;
+			$voicelist.material_select();
+		  }		  
+		}
 
-		msg.onend = function(e) {
-			console.log('Finished in ' + e.elapsedTime + ' seconds.');
+		$('#speak').click(function(){
+		
+			var text = $('#message').val();
+			var msg = new SpeechSynthesisUtterance();
+			var voices = window.speechSynthesis.getVoices();
+			msg.voice = voices[$('#voices').val()];
+			msg.rate = $('#rate').val() / 10;
+			msg.pitch = $('#pitch').val();
+			msg.text = text;
+
+			msg.onend = function(e) {
+				console.log('Finished in ' + e.elapsedTime + ' seconds.');
+			};
+
+			console.log("speaking: " + text);
+			speechSynthesis.speak(msg);
+		});
+		
+		function speak(msg){
+		
+			$('#message').focus().val( msg );
+			$('#speak').trigger('click');
 		};
+		  
+		$('#kata').click(function(){
 
-		speechSynthesis.speak(msg);
-    });
-	
-	function speak(msg){
-	
-		console.log(msg);
-		$('#message').focus().val( msg );
-		$('#speak').trigger('click');
-	};
-      
-    $('#kata').click(function(){
+			var r = getRandomInt.apply(null, 
+										slider.noUiSlider.get().map(function(item) {
+																		return parseInt(item, 10);
+																	})
+									  )||0,
+				k = getRandomKata();
+		
+			console.log( k + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, k);	 	 
+		});	
+		
+		$('#kumite').click(function(){
 
-		var v = $('#random-start').val(),
-			r = v ? getRandomInt.apply(null, slider.noUiSlider.get() ) : 0,
-			k = getRandomKata();
-	
-		console.log( k + " in " + r + "(s)");
-		window.setTimeout(speak, r * 1000, k);	 	 
-    });	
-	
-    $('#kumite').click(function(){
-
-		var r = getRandomInt.apply(null, 
-									slider.noUiSlider.get().map(function(item) {
-																	return parseInt(item, 10);
-																})
-								  )||0,
-			k = getRandomKumite();
-	
-		console.log( k + " in " + r + "(s)");
-		window.setTimeout(speak, r * 1000, k);	
-    });	
-	
-  } else {
-    $('#modal1').openModal();
-  }
+			var r = getRandomInt.apply(null, 
+										slider.noUiSlider.get().map(function(item) {
+																		return parseInt(item, 10);
+																	})
+									  )||0,
+				k = getRandomKumite();
+		
+			console.log( k + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, k);	
+		});	
+		
+	  } else {
+		$('#modal1').openModal();
+	  }
 });
 </script>
