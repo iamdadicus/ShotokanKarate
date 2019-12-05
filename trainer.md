@@ -49,11 +49,6 @@
 	  </div>
       <div class="col s12">
 		<div id="test-slider"></div>
-        <!--<label>Randomise start (s)</label>
-        <p class="range-field">
-          <input type="range" id="random-start" min="0" max="20" value="5,25" />
-        </p>
-      </div>-->	  
     </div>
     <div class="row">
       <div class="input-field col s12">
@@ -70,7 +65,7 @@
 		<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
 	  </div>	
 	</div>	
-  </form>  
+    </form>
 </div>
 
 <div id="modal1" class="modal">
