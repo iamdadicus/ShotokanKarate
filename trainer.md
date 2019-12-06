@@ -1,6 +1,7 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.1/css/materialize.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <link rel="stylesheet" href="nouislider.css">
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
 <div class="container">
   <div class="row">
     <nav>
@@ -57,9 +58,11 @@
       </div>
       <div class="col s6">	
 		<a href="#" id="kata" class="waves-effect waves-light btn">Kata Test</a>
+		<a href="#" id="kata-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
 	  </div>
 	  <div class="col s6">		
-		<a href="#" id="kumite" class="waves-effect waves-light btn">Kumite Test</a>
+		<a href="#" id="kumite"      class="waves-effect waves-light btn">Kumite Test</a>
+		<a href="#" id="kumite-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
 	  </div>
 	  <div class="col s12">
 		<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
@@ -77,8 +80,12 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.1/js/materialize.min.js"></script>
+<!-- Compiled and minified JavaScript -->
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="nouislider.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
 <script>
@@ -88,15 +95,16 @@
 function getRandomInt(p1, p2) {
 
   var m = p2 ? p2 - p1 : p1;
-  console.log(m, p1, p2);
   return Math.floor(Math.random() * Math.floor(m)) + (p2 ? p1 : 0);
 }
 
 var grading = {
+/*
 	"10th Kyu" : {
 		belt : "blue",
 		kata	: ["Taikyo-Ku-Shodan"]
 	},
+*/	
 	"9th Kyu" : {
 		belt   : "red",
 		kumite : {
@@ -163,85 +171,92 @@ var grading = {
 	}	
 };
 
-function getRandomKata(){
+function getRandomBelt(data){
 
-	var belts = Object.keys(grading),
+	var belts = Object.keys(data),
 		random_no = getRandomInt(belts.length);
 
-	return grading[ belts[random_no] ].kata;
+	return belts[random_no];
 }
 
-function getRandomKumite(){
+function getRandomBeltKumite(data, belt){
 
-	var all_kumite = Object.keys(grading["2nd Kyu"].kumite),
-		random_no = getRandomInt(all_kumite.length),
-		kumite = all_kumite[ random_no ],
-		sets = grading["2nd Kyu"].kumite[ kumite ];
-		
-	if( sets ){
-		
-		var random_set_no = getRandomInt( sets[0].length ),
-		    option_no	  = getRandomInt( sets[1].length ),
-		
-		kumite = kumite + " " + sets[0][random_set_no] + " " + sets[1][option_no];
-	}	
+	var all_kumite = Object.keys(data[belt].kumite),
+		random_no  = getRandomInt(all_kumite.length),
+		kumite     = all_kumite[ random_no ],
+		sets       = data[belt].kumite[kumite];
 
-	return kumite;
+	if( !sets ){
+		return [kumite];
+	}
+			
+	var random_set_no = getRandomInt( sets[0].length ),
+		option_no	  = getRandomInt( sets[1].length );
+		
+	return [kumite, sets[0][random_set_no], sets[1][option_no]];	
 }
 
 //https://codepen.io/SteveJRobertson/pen/emGWaR
 $(function(){
 
+	M.AutoInit();
+	
 	$('.collapsible').collapsible();
+	$('#kumite-next').hide();
+	$('#kata-next').hide();
 
 	var slider = document.getElementById('test-slider');
-	  noUiSlider.create(slider, {
-	   start: [2, 15],
-	   connect: true,
-	   step: 1,
-	   orientation: 'horizontal', // 'horizontal' or 'vertical'
-	   range: {
-		 'min': 0,
-		 'max': 60
-	   },
-	   format: wNumb({
-		 decimals: 0
-	   })
-	  });
+		noUiSlider.create(slider, {
+			start: [2, 15],
+			connect: true,
+			step: 1,
+			orientation: 'horizontal', // 'horizontal' or 'vertical'
+			range: {
+				'min': 0,
+				'max': 60
+			},
+			format: wNumb({
+				decimals: 0
+			})
+		});
 	  
-	  if ('speechSynthesis' in window) {
+	if ('speechSynthesis' in window) {
 	  
 		speechSynthesis.onvoiceschanged = function() {
-		  var $voicelist = $('#voices'),
-			  has_jp	 = false;
+		
+			var $voicelist = $('#voices'),
+				has_jp	 = false;
 
-		  if($voicelist.find('option').length == 0) {
-			speechSynthesis.getVoices().forEach(function(voice, index) {
+			if($voicelist.find('option').length == 0) {
 			
-				//console.log(voice);
-			  var $option = $('<option>')
-			  .val(index)
-			  .html((voice.name || voice.voiceURI || voice.lang )+ (voice.default ? ' (default)' :''))
-			  .attr('data-lang', voice.lang)
-			  .attr('data-default_voice', voice.default);
+				speechSynthesis.getVoices().forEach(function(voice, index) {
+			
+					//console.log(voice);
+					var $option = $('<option>')
+						.val(index)
+						.html((voice.name || voice.voiceURI || voice.lang)+ (voice.default ? ' (default)' :''))
+						.attr('data-lang', voice.lang)
+						.attr('data-default_voice', voice.default);
 
-				//is there a Japanese voice?
-			   if( voice.lang == 'ja-JP' ) has_jp = true;
+					M.toast({html: 'Found ' + voice.lang});
+				
+					//is there a Japanese voice?
+					if( voice.lang == 'ja-JP' ) has_jp = true;
 			   
-			  $voicelist.append($option);
-			});
+					$voicelist.append($option);
+				});
 
-		  //auto select japanese voice
-		  if( has_jp ){ 
-			$('option[data-lang="ja-JP"]', $voicelist).attr('selected', true);
-		  }
-		  else {
-			//selected default voice
-			$('option[data-default_voice="1"]', $voicelist).attr('selected', true);
-		  }
+				//auto select japanese voice
+				if( has_jp ){ 
+					$('option[data-lang="ja-JP"]', $voicelist).attr('selected', true);
+				}
+				else {
+					//selected default voice
+					$('option[data-default_voice="1"]', $voicelist).attr('selected', true);
+				}
 
-			$voicelist.material_select();
-		  }		  
+				$voicelist.formSelect();
+			}		  
 		}
 
 		$('#speak').click(function(){
@@ -275,11 +290,46 @@ $(function(){
 																		return parseInt(item, 10);
 																	})
 									  )||0,
-				k = getRandomKata();
+				b = getRandomBelt(grading),
+				k = grading[b],
+				c = $.extend(true, {}, grading); //copy grading syllabus
 		
-			console.log( k + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, k);	 	 
+			delete c[b]; //remove selected belt from copy
+			
+			//assign copy to next button
+			$('#kata-next')
+				.data(c)
+				.show();
+			
+			console.log( k.kata + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, k.kata);	 	 
 		});	
+		
+		$('#kata-next').click(function(){
+
+			var r = getRandomInt.apply(null, 
+										slider.noUiSlider.get().map(function(item) {
+																		return parseInt(item, 10);
+																	})
+									  )||0,
+				s = $('#kata-next').data(),	//syllabus stored in next button
+				b = getRandomBelt(s),
+				k = grading[b];
+		
+			delete s[b]; //remove selected belt from copy
+			
+			//re-assign syllabus next button
+			$('#kata-next').data(s);
+			
+			//hide next button if this is the last
+			if( !Object.keys(s).length ){
+			
+				$('#kata-next').hide();
+			}
+			
+			console.log( k.kata + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, k.kata);	 	 
+		});		
 		
 		$('#kumite').click(function(){
 
@@ -288,13 +338,90 @@ $(function(){
 																		return parseInt(item, 10);
 																	})
 									  )||0,
-				k = getRandomKumite();
+				b = "2nd Kyu",				
+				k = getRandomBeltKumite(grading, b),				
+				s = k.join(' '),
+				c = $.extend(true, {}, grading); //copy grading syllabus
+				
+			if( k.length > 1 ){
+			
+				var kumite_name = k[0],
+					set_name    = k[1],
+					set_array 	= c[b].kumite[kumite_name];
+
+				//remove selected kumite set
+				var index = set_array[0].indexOf(set_name);
+				
+				if (index > -1) {
+				  set_array[0].splice(index, 1);
+				}				
+				
+				console.log(set_array);
+				c[b].kumite[ kumite_name ][ set_name ] = set_array;
+			}
+			else {
+			
+				delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
+			}
 		
-			console.log( k + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, k);	
+			//re-assign syllabus next button
+			$('#kumite-next')
+				.data(c)
+				.show();
+			
+			console.log( s + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, s);	
 		});	
 		
-	  } else {
+		$('#kumite-next').click(function(){
+
+			var r = getRandomInt.apply(null, 
+										slider.noUiSlider.get().map(function(item) {
+																		return parseInt(item, 10);
+																	})
+									  )||0,
+				c = $('#kumite-next').data(),	//syllabus stored in next button
+				b = "2nd Kyu",				
+				k = getRandomBeltKumite(c, b),				
+				s = k.join(' ');
+				
+			if( k.length > 1 ){
+			
+				var kumite_name = k[0],
+					set_name    = k[1],
+					set_array 	= c[b].kumite[kumite_name];
+
+				//remove selected kumite set
+				var index = set_array[0].indexOf(set_name);
+				
+				if (index > -1) {
+				  set_array[0].splice(index, 1);
+				}				
+				
+				if( !set_array[0].length ){
+				
+					delete c[b].kumite[ kumite_name ];
+				}
+			}
+			else {
+			
+				delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
+			}
+			
+			//re-assign syllabus next button
+			$('#kumite-next').data(c);
+			
+			//hide next button if this is the last
+			if( !Object.keys(c[b].kumite).length ){
+			
+				$('#kumite-next').hide();
+			}
+			
+			console.log( s + " in " + r + "(s)");
+			window.setTimeout(speak, r * 1000, s);		 
+		});			
+	  } 
+	  else {
 		$('#modal1').openModal();
 	  }
 });
