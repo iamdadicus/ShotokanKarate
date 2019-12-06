@@ -3,81 +3,82 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
  
 <div class="container">
-  <div class="row">
-    <nav>
-      <div class="nav-wrapper">
-        <div class="col s12">
-          <a href="#" class="brand-logo">Aural Trainer</a>
-        </div>
-      </div>
-    </nav>
-  </div>
-  <form class="col s8 offset-s2">
-    <div class="row">
-      <label>Choose voice</label>
-      <select id="voices"></select>
-    </div>
 	<div class="row">
-	  <ul class="collapsible">
-		<li>
-		  <div class="collapsible-header">Speech Rate and Pitch</div>
-		  <div class="collapsible-body">
-			<span>
-	
-			  <div class="col s6">
-				<label>Rate</label>
-				<p class="range-field">
-				  <input type="range" id="rate" min="1" max="100" value="10" />
-				</p>
-			  </div>
-			  <div class="col s6">
-				<label>Pitch</label>
-				<p class="range-field">
-				  <input type="range" id="pitch" min="0" max="2" value="1" />
-				</p>
-			  </div>
-			  <div class="col s12">
-				<p>N.B. Rate and Pitch only work with native voice.</p>
-			  </div>		
-			</span>
-		  </div>
-		</li>
-	  </ul>	
+		<nav>
+			<div class="nav-wrapper">
+				<div class="col s12">
+					<a href="#" class="brand-logo">Aural Trainer</a>
+				</div>
+			</div>
+		</nav>
 	</div>
-    <div class="row">
-	  <div class="col s12">
-		<h6>Random Delay</h6>
-	  </div>
-      <div class="col s12">
-		<div id="test-slider"></div>
-    </div>
-    <div class="row">
-      <div class="input-field col s12">
-        <textarea id="message" class="materialize-textarea"></textarea>
-        <label>Text To Speech</label>
-      </div>
-      <div class="col s6">	
-		<a href="#" id="kata" class="waves-effect waves-light btn">Kata Test</a>
-		<a href="#" id="kata-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
-	  </div>
-	  <div class="col s6">		
-		<a href="#" id="kumite"      class="waves-effect waves-light btn">Kumite Test</a>
-		<a href="#" id="kumite-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
-	  </div>
-	  <div class="col s12">
-		<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
-	  </div>	
-	</div>	
-    </form>
+	<form class="col s8 offset-s2">
+		<div class="row">
+			<label>Choose voice</label>
+			<select id="voices"></select>
+		</div>
+		<div class="row">
+			<ul class="collapsible">
+				<li>
+					<div class="collapsible-header">Speech Rate and Pitch</div>
+					<div class="collapsible-body">
+						<span>
+
+							<div class="col s6">
+								<label>Rate</label>
+								<p class="range-field">
+									<input type="range" id="rate" min="1" max="100" value="10" />
+								</p>
+							</div>
+							<div class="col s6">
+								<label>Pitch</label>
+								<p class="range-field">
+									<input type="range" id="pitch" min="0" max="2" value="1" />
+								</p>
+							</div>
+							<div class="col s12">
+								<p>N.B. Rate and Pitch only work with native voice.</p>
+							</div>		
+						</span>
+					</div>
+				</li>
+			</ul>	
+		</div>
+		<div class="row">
+			<div class="col s12">
+				<h6>Random Delay</h6>
+			</div>
+			<div class="col s12">
+				<div id="test-slider"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<textarea id="message" class="materialize-textarea"></textarea>
+				<label>Text To Speech</label>
+			</div>
+			<div class="col s6">	
+				<a href="#" id="kata" class="waves-effect waves-light btn">Kata Test</a>
+				<a href="#" id="kata-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
+			</div>
+			<div class="col s6">		
+				<a href="#" id="kumite"      class="waves-effect waves-light btn">Kumite Test</a>
+				<a href="#" id="kumite-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
+			</div>
+			<div class="col s12">
+				<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
+			</div>	
+		</div>	
+	</form>
 </div>
 
 <div id="modal1" class="modal">
-  <h4>Speech Synthesis not supported</h4>
-  <p>Your browser does not support speech synthesis.</p>
-  <p>We recommend you use Google Chrome.</p>
-  <div class="action-bar">
-    <a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a>
-  </div>
+	<h4>Speech Synthesis not supported</h4>
+	<p>Your browser does not support speech synthesis.</p>
+	<p>We recommend you use Google Chrome.</p>
+	<div class="action-bar">
+		<a href="#" class="waves-effect waves-green btn-flat modal-action modal-close">Close</a>
+	</div>
 </div>
 
 <!-- Compiled and minified JavaScript -->
