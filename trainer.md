@@ -160,7 +160,14 @@ var grading = {
 		belt	: "brown-white",
 		kihon	: [
 			"Mae-Geri, Sanbon-Zuki",
-			"Age-Uke, Uraken, Mae-Geri, Gyaku-Zuki, Gedan-Barai"
+			"Age-Uke, Uraken, Mae-Geri, Gyaku-Zuki, Geda-Barai",
+			"Soto-Uke, Yoko-Empi, Uraken, Gyaku-Zuki, Gedan-Barai",
+			"Uchi-Uke (in Kokutsu-dachi), Kizami-Zuki, Gyaku-Zuki",
+			"Shuto-Uke, Kizami-Mawashi-Geri, Gyaku-Zuki, Gedan-Barai",
+			"Mae-Geri, Mawashi-Geri, Uraken, Gyaku-Zuki, Gedan-Barai",
+			"Mae-Geri, Kekomi, Shuto-Uchi, Gyaku-Zuki, Gedan-Barai",
+			"Yoko-Geri-Keage & Kekomi, Gyaku-Zuki, Gedan-Barai",
+			"Ushiro-Geri, Uraken, Gyaku-Zuki"
 		],
 		kumite : {
 			"kihon ippon" : [["set five", "set four", "set three", "set two", "set one"],["", "hidari", "migi"]],
@@ -208,7 +215,7 @@ $(function(){
 
 	var slider = document.getElementById('test-slider');
 		noUiSlider.create(slider, {
-			start: [2, 15],
+			start: [2, 10],
 			connect: true,
 			step: 1,
 			orientation: 'horizontal', // 'horizontal' or 'vertical'
