@@ -99,7 +99,32 @@ function getRandomInt(p1, p2) {
   return Math.floor(Math.random() * Math.floor(m)) + (p2 ? p1 : 0);
 }
 
-var grading = {
+// https://itinerarium.github.io/phoneme-synthesis/
+var phonetics = [
+		["sanbon", "sanbonn"],
+		["gohon", "go honn"],
+		["kihon", "keyhon"],
+		["jiyu", "jeeyu"],
+		["migi", "migy"],
+		["mae", "may"],
+		["geri", "gehry"],		
+		["age", "aggi"],
+		["uke", "ookey"],
+		["uraken", "youracken"], //uoracken earachen
+		["gyaku", "guyackhu"], //Guycku 
+		["geden", "Gehd dan"], 
+		["barai", "bharrai"],
+		["uchi", "oochi"],
+		["kizami", "kizzahmi"],
+		["keage", "keeahgi"],
+		["usherio", "ohwsherro"], //yousherrow
+		["heian", "hean"],
+		["hidari", "hid areye"],
+		["nidan", "kneedan"],
+		["bassai", "bhass eye"],
+		["shodan", "showdan"]
+	],
+	syllabus = {
 /*
 	"10th Kyu" : {
 		belt : "blue",
@@ -162,7 +187,7 @@ var grading = {
 			"Mae-Geri, Sanbon-Zuki",
 			"Age-Uke, Uraken, Mae-Geri, Gyaku-Zuki, Geda-Barai",
 			"Soto-Uke, Yoko-Empi, Uraken, Gyaku-Zuki, Gedan-Barai",
-			"Uchi-Uke (in Kokutsu-dachi), Kizami-Zuki, Gyaku-Zuki",
+			"Uchi-Uke, Kizami-Zuki, Gyaku-Zuki",
 			"Shuto-Uke, Kizami-Mawashi-Geri, Gyaku-Zuki, Gedan-Barai",
 			"Mae-Geri, Mawashi-Geri, Uraken, Gyaku-Zuki, Gedan-Barai",
 			"Mae-Geri, Kekomi, Shuto-Uchi, Gyaku-Zuki, Gedan-Barai",
@@ -255,7 +280,7 @@ $(function(){
 				});
 
 				//auto select japanese voice
-				if( has_jp ){ 
+				if( false && has_jp ){ 
 					$('option[data-lang="ja-JP"]', $voicelist).attr('selected', true);
 				}
 				else {
@@ -269,12 +294,18 @@ $(function(){
 
 		$('#speak').click(function(){
 		
-			var text = $('#message').val();
+			var text = $('#message').val().toLowerCase();
 			var msg = new SpeechSynthesisUtterance();
 			var voices = window.speechSynthesis.getVoices();
 			msg.voice = voices[$('#voices').val()];
 			msg.rate = $('#rate').val() / 10;
 			msg.pitch = $('#pitch').val();
+			
+			for( var i = 0; i < phonetics.length; i++) {
+				console.log(phonetics[i][0]);
+				text = text.replace(phonetics[i][0], phonetics[i][1]);
+			}
+			
 			msg.text = text;
 
 			msg.onend = function(e) {
@@ -298,9 +329,9 @@ $(function(){
 																		return parseInt(item, 10);
 																	})
 									  )||0,
-				b = getRandomBelt(grading),
-				k = grading[b],
-				c = $.extend(true, {}, grading); //copy grading syllabus
+				b = getRandomBelt(syllabus),
+				k = syllabus[b],
+				c = $.extend(true, {}, syllabus); //copy grading syllabus
 		
 			delete c[b]; //remove selected belt from copy
 			
@@ -322,7 +353,7 @@ $(function(){
 									  )||0,
 				s = $('#kata-next').data(),	//syllabus stored in next button
 				b = getRandomBelt(s),
-				k = grading[b];
+				k = syllabus[b];
 		
 			delete s[b]; //remove selected belt from copy
 			
@@ -347,9 +378,9 @@ $(function(){
 																	})
 									  )||0,
 				b = "2nd Kyu",				
-				k = getRandomBeltKumite(grading, b),				
+				k = getRandomBeltKumite(syllabus, b),				
 				s = k.join(' '),
-				c = $.extend(true, {}, grading); //copy grading syllabus
+				c = $.extend(true, {}, syllabus); //copy grading syllabus
 				
 			if( k.length > 1 ){
 			
