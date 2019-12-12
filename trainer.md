@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 <link rel="stylesheet" href="nouislider.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
- 
+
 <div class="container">
 	<div class="row">
 		<nav>
@@ -124,6 +124,33 @@ var phonetics = [
 		["bassai", "bhass eye"],
 		["shodan", "showdan"]
 	],
+	mp3 = [
+		"age uki", 
+		"bassai dai",
+		"gedan barrai",       
+		"gohon",              
+		"gyaku zuki",
+		"heian godan",        
+		"heian nidan",        
+		"heian sandan",
+		"heian shodan",       
+		"heian yondan",       
+		"hidari",
+		"jiyu",               
+		"kihon ippon",        
+		"mai geri",
+		"migi",               
+		"sanbon zuki",
+		"sanbon",             
+		"set five",           
+		"set four",
+		"set one",            
+		"set three",          
+		"set two",
+		"taikyo-ku-shodan",   
+		"tekki shodan",       
+		"uraken"
+		],
 	syllabus = {
 /*
 	"10th Kyu" : {
@@ -136,7 +163,7 @@ var phonetics = [
 		kumite : {
 			"kihon ippon" : "set 1" 
 		},
-		kata	: ["Taikyo-Ku-Shodan"]		
+		kata	: ["taikyo-ku-shodan"]		
 	},
 	"8th Kyu" : {
 		belt   : "orange",
@@ -237,6 +264,18 @@ $(function(){
 	$('.collapsible').collapsible();
 	$('#kumite-next').hide();
 	$('#kata-next').hide();
+	
+	//process mp3 list
+	for( var i = 0; i < mp3.length; i++) {
+
+		mp3[i] = [new RegExp( '\\b' + mp3[i].replace(/\s+/i, '\\s+') + '\\b(?![^{]*})'), mp3[i] + ".mp3"];
+		
+		$('<audio controls preload="auto">')
+			.attr('type', 'audio/mpeg')
+			.attr('src', 'mp3/' + mp3[i][1])
+			.appendTo('body')
+			.hide();
+	}	
 
 	var slider = document.getElementById('test-slider');
 		noUiSlider.create(slider, {
@@ -271,7 +310,7 @@ $(function(){
 						.attr('data-lang', voice.lang)
 						.attr('data-default_voice', voice.default);
 
-					M.toast({html: 'Found ' + voice.lang});
+					//M.toast({html: 'Found ' + voice.lang});
 				
 					//is there a Japanese voice?
 					if( voice.lang == 'ja-JP' ) has_jp = true;
@@ -293,6 +332,43 @@ $(function(){
 		}
 
 		$('#speak').click(function(){
+		
+			var text = $('#message').val().toLowerCase(),
+				playlist = [];
+			
+			for( var i = 0; i < mp3.length; i++) {
+
+				//can we perform a replace?				
+				if( mp3[i][0].test(text) ) {
+				
+					//playlist.push('mp3/' + mp3[i][1]);				
+					text = text.replace(mp3[i][0], '{mp3/' + mp3[i][1] + '}').trim();
+				}
+			}			
+
+			const regex = /{([^}]+)}/gm;
+			let m;
+
+			while ((m = regex.exec(text)) !== null) {
+			
+				// This is necessary to avoid infinite loops with zero-width matches
+				if (m.index === regex.lastIndex) {
+					regex.lastIndex++;
+				}
+
+				// The result can be accessed through the `m`-variable.
+				playlist.push(m[1]);//group 1
+			}
+			
+			console.log(playlist);
+			
+			var currentTrackIndex = 0;    
+			var delayBetweenTracks = 2000;
+			//new Audio('mp3/heian shodan.mp3').play()
+
+		});
+		
+		$('#synthesize-speech').click(function(){
 		
 			var text = $('#message').val().toLowerCase();
 			var msg = new SpeechSynthesisUtterance();
