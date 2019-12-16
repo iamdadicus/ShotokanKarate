@@ -81,6 +81,8 @@
 	</div>
 </div>
 
+<audio id="testAudio" hidden type="audio/mpeg"></audio>
+
 <!-- Compiled and minified JavaScript -->
 <script
   src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -136,7 +138,7 @@ var phonetics = [
 		"heian shodan",       
 		"heian yondan",       
 		"hidari",
-		"jiyu",               
+		"jiyu ippon",               
 		"kihon ippon",        
 		"mai geri",
 		"migi",               
@@ -362,10 +364,25 @@ $(function(){
 			
 			console.log(playlist);
 			
+			// https://stackoverflow.com/questions/44366485/how-to-make-multiple-mp3-files-play-one-after-another-on-the-click-of-a-button-u
 			var currentTrackIndex = 0;    
-			var delayBetweenTracks = 2000;
-			//new Audio('mp3/heian shodan.mp3').play()
-
+			var delayBetweenTracks = 0;
+			
+			var audio = document.getElementById('testAudio'); 
+			
+			audio.src = playlist[currentTrackIndex];
+			audio.play();
+				  
+			document.getElementById("testAudio").addEventListener("ended",function(e) {
+			       
+			  setTimeout(function() { 
+				currentTrackIndex++;
+				if (currentTrackIndex < playlist.length) { 
+				  audio.src = playlist[currentTrackIndex];
+				  audio.play();
+				}
+			  }, delayBetweenTracks);
+			});			
 		});
 		
 		$('#synthesize-speech').click(function(){
