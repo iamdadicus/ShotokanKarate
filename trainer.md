@@ -13,6 +13,7 @@
 		</nav>
 	</div>
 	<form class="col s8 offset-s2">
+<!--	
 		<div class="row">
 			<label>Choose voice</label>
 			<select id="voices"></select>
@@ -44,6 +45,7 @@
 				</li>
 			</ul>	
 		</div>
+-->		
 		<div class="row">
 			<div class="col s12">
 				<h6>Random Delay</h6>
@@ -65,10 +67,12 @@
 				<a href="#" id="kumite"      class="waves-effect waves-light btn">Kumite Test</a>
 				<a href="#" id="kumite-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
 			</div>
+		</div>	
+		<div class="row">
 			<div class="col s12">
 				<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
-			</div>	
-		</div>	
+			</div>			
+		</div>
 	</form>
 </div>
 
@@ -332,229 +336,235 @@ $(function(){
 				$voicelist.formSelect();
 			}		  
 		}
-
-		$('#speak').click(function(){
-		
-			var text = $('#message').val().toLowerCase(),
-				playlist = [];
-			
-			for( var i = 0; i < mp3.length; i++) {
-
-				//can we perform a replace?				
-				if( mp3[i][0].test(text) ) {
-				
-					//playlist.push('mp3/' + mp3[i][1]);				
-					text = text.replace(mp3[i][0], '{mp3/' + mp3[i][1] + '}').trim();
-				}
-			}			
-
-			const regex = /{([^}]+)}/gm;
-			let m;
-
-			while ((m = regex.exec(text)) !== null) {
-			
-				// This is necessary to avoid infinite loops with zero-width matches
-				if (m.index === regex.lastIndex) {
-					regex.lastIndex++;
-				}
-
-				// The result can be accessed through the `m`-variable.
-				playlist.push(m[1]);//group 1
-			}
-			
-			console.log(playlist);
-			
-			// https://stackoverflow.com/questions/44366485/how-to-make-multiple-mp3-files-play-one-after-another-on-the-click-of-a-button-u
-			var currentTrackIndex = 0;    
-			var delayBetweenTracks = 0;
-			
-			var audio = document.getElementById('testAudio'); 
-			
-			audio.src = playlist[currentTrackIndex];
-			audio.play();
-				  
-			document.getElementById("testAudio").addEventListener("ended",function(e) {
-			       
-			  setTimeout(function() { 
-				currentTrackIndex++;
-				if (currentTrackIndex < playlist.length) { 
-				  audio.src = playlist[currentTrackIndex];
-				  audio.play();
-				}
-			  }, delayBetweenTracks);
-			});			
-		});
-		
-		$('#synthesize-speech').click(function(){
-		
-			var text = $('#message').val().toLowerCase();
-			var msg = new SpeechSynthesisUtterance();
-			var voices = window.speechSynthesis.getVoices();
-			msg.voice = voices[$('#voices').val()];
-			msg.rate = $('#rate').val() / 10;
-			msg.pitch = $('#pitch').val();
-			
-			for( var i = 0; i < phonetics.length; i++) {
-				console.log(phonetics[i][0]);
-				text = text.replace(phonetics[i][0], phonetics[i][1]);
-			}
-			
-			msg.text = text;
-
-			msg.onend = function(e) {
-				console.log('Finished in ' + e.elapsedTime + ' seconds.');
-			};
-
-			console.log("speaking: " + text);
-			speechSynthesis.speak(msg);
-		});
-		
-		function speak(msg){
-		
-			$('#message').focus().val( msg );
-			$('#speak').trigger('click');
-		};
-		  
-		$('#kata').click(function(){
-
-			var r = getRandomInt.apply(null, 
-										slider.noUiSlider.get().map(function(item) {
-																		return parseInt(item, 10);
-																	})
-									  )||0,
-				b = getRandomBelt(syllabus),
-				k = syllabus[b],
-				c = $.extend(true, {}, syllabus); //copy grading syllabus
-		
-			delete c[b]; //remove selected belt from copy
-			
-			//assign copy to next button
-			$('#kata-next')
-				.data(c)
-				.show();
-			
-			console.log( k.kata + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, k.kata);	 	 
-		});	
-		
-		$('#kata-next').click(function(){
-
-			var r = getRandomInt.apply(null, 
-										slider.noUiSlider.get().map(function(item) {
-																		return parseInt(item, 10);
-																	})
-									  )||0,
-				s = $('#kata-next').data(),	//syllabus stored in next button
-				b = getRandomBelt(s),
-				k = syllabus[b];
-		
-			delete s[b]; //remove selected belt from copy
-			
-			//re-assign syllabus next button
-			$('#kata-next').data(s);
-			
-			//hide next button if this is the last
-			if( !Object.keys(s).length ){
-			
-				$('#kata-next').hide();
-			}
-			
-			console.log( k.kata + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, k.kata);	 	 
-		});		
-		
-		$('#kumite').click(function(){
-
-			var r = getRandomInt.apply(null, 
-										slider.noUiSlider.get().map(function(item) {
-																		return parseInt(item, 10);
-																	})
-									  )||0,
-				b = "2nd Kyu",				
-				k = getRandomBeltKumite(syllabus, b),				
-				s = k.join(' '),
-				c = $.extend(true, {}, syllabus); //copy grading syllabus
-				
-			if( k.length > 1 ){
-			
-				var kumite_name = k[0],
-					set_name    = k[1],
-					set_array 	= c[b].kumite[kumite_name];
-
-				//remove selected kumite set
-				var index = set_array[0].indexOf(set_name);
-				
-				if (index > -1) {
-				  set_array[0].splice(index, 1);
-				}				
-				
-				console.log(set_array);
-				c[b].kumite[ kumite_name ][ set_name ] = set_array;
-			}
-			else {
-			
-				delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
-			}
-		
-			//re-assign syllabus next button
-			$('#kumite-next')
-				.data(c)
-				.show();
-			
-			console.log( s + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, s);	
-		});	
-		
-		$('#kumite-next').click(function(){
-
-			var r = getRandomInt.apply(null, 
-										slider.noUiSlider.get().map(function(item) {
-																		return parseInt(item, 10);
-																	})
-									  )||0,
-				c = $('#kumite-next').data(),	//syllabus stored in next button
-				b = "2nd Kyu",				
-				k = getRandomBeltKumite(c, b),				
-				s = k.join(' ');
-				
-			if( k.length > 1 ){
-			
-				var kumite_name = k[0],
-					set_name    = k[1],
-					set_array 	= c[b].kumite[kumite_name];
-
-				//remove selected kumite set
-				var index = set_array[0].indexOf(set_name);
-				
-				if (index > -1) {
-				  set_array[0].splice(index, 1);
-				}				
-				
-				if( !set_array[0].length ){
-				
-					delete c[b].kumite[ kumite_name ];
-				}
-			}
-			else {
-			
-				delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
-			}
-			
-			//re-assign syllabus next button
-			$('#kumite-next').data(c);
-			
-			//hide next button if this is the last
-			if( !Object.keys(c[b].kumite).length ){
-			
-				$('#kumite-next').hide();
-			}
-			
-			console.log( s + " in " + r + "(s)");
-			window.setTimeout(speak, r * 1000, s);		 
-		});			
-	  } 
-	  else {
+	}
+/*	else {
 		$('#modal1').openModal();
-	  }
+	}
+*/	
+	
+	$('#speak').click(function(){
+	
+		var text = $('#message').val().toLowerCase(),
+			playlist = [];
+		
+		for( var i = 0; i < mp3.length; i++) {
+
+			//can we perform a replace?				
+			if( mp3[i][0].test(text) ) {
+			
+				//playlist.push('mp3/' + mp3[i][1]);				
+				text = text.replace(mp3[i][0], '{mp3/' + mp3[i][1] + '}').trim();
+			}
+		}			
+
+		const regex = /{([^}]+)}/gm;
+		let m;
+
+		while ((m = regex.exec(text)) !== null) {
+		
+			// This is necessary to avoid infinite loops with zero-width matches
+			if (m.index === regex.lastIndex) {
+				regex.lastIndex++;
+			}
+
+			// The result can be accessed through the `m`-variable.
+			playlist.push(m[1]);//group 1
+		}
+		
+		console.log(playlist);
+		
+		// https://stackoverflow.com/questions/44366485/how-to-make-multiple-mp3-files-play-one-after-another-on-the-click-of-a-button-u
+		var currentTrackIndex = 0;    
+		var delayBetweenTracks = 0;
+		
+		var audio = document.getElementById('testAudio'); 
+		
+		audio.src = playlist[currentTrackIndex];
+		audio.play();
+			  
+		document.getElementById("testAudio").addEventListener("ended",function(e) {
+			   
+			$('#kata, #kata-next, #kumite, #kumite-next').attr('disabled', false);
+		  setTimeout(function() { 
+			currentTrackIndex++;
+			if (currentTrackIndex < playlist.length) { 
+			  audio.src = playlist[currentTrackIndex];
+			  audio.play();
+			}
+		  }, delayBetweenTracks);
+		});			
+	});
+	
+	$('#synthesize-speech').click(function(){
+	
+		var text = $('#message').val().toLowerCase();
+		var msg = new SpeechSynthesisUtterance();
+		var voices = window.speechSynthesis.getVoices();
+		msg.voice = voices[$('#voices').val()];
+		msg.rate = $('#rate').val() / 10;
+		msg.pitch = $('#pitch').val();
+		
+		for( var i = 0; i < phonetics.length; i++) {
+			console.log(phonetics[i][0]);
+			text = text.replace(phonetics[i][0], phonetics[i][1]);
+		}
+		
+		msg.text = text;
+
+		msg.onend = function(e) {
+			console.log('Finished in ' + e.elapsedTime + ' seconds.');
+		};
+
+		console.log("speaking: " + text);
+		speechSynthesis.speak(msg);
+	});
+	
+	function speak(msg){
+	
+		$('#message').focus().val( msg );
+		$('#speak').trigger('click');
+	};
+	  
+	$('#kata').click(function(){
+
+		var r = getRandomInt.apply(null, 
+									slider.noUiSlider.get().map(function(item) {
+																	return parseInt(item, 10);
+																})
+								  )||0,
+			b = getRandomBelt(syllabus),
+			k = syllabus[b],
+			c = $.extend(true, {}, syllabus); //copy grading syllabus
+	
+		delete c[b]; //remove selected belt from copy
+		
+		//assign copy to next button
+		$('#kata-next')
+			.data(c)
+			.show();
+		
+		console.log( k.kata + " in " + r + "(s)");
+		window.setTimeout(speak, r * 1000, k.kata);	 	 
+		$(this).attr('disabled', true);
+	});	
+	
+	$('#kata-next').click(function(){
+
+		var r = getRandomInt.apply(null, 
+									slider.noUiSlider.get().map(function(item) {
+																	return parseInt(item, 10);
+																})
+								  )||0,
+			s = $('#kata-next').data(),	//syllabus stored in next button
+			b = getRandomBelt(s),
+			k = syllabus[b];
+	
+		delete s[b]; //remove selected belt from copy
+		
+		//re-assign syllabus next button
+		$('#kata-next').data(s);
+		
+		//hide next button if this is the last
+		if( !Object.keys(s).length ){
+		
+			$('#kata-next').hide();
+		}
+		
+		console.log( k.kata + " in " + r + "(s)");
+		window.setTimeout(speak, r * 1000, k.kata);	 	
+		$(this).attr('disabled', true);		
+	});		
+	
+	$('#kumite').click(function(){
+
+		var r = getRandomInt.apply(null, 
+									slider.noUiSlider.get().map(function(item) {
+																	return parseInt(item, 10);
+																})
+								  )||0,
+			b = "2nd Kyu",				
+			k = getRandomBeltKumite(syllabus, b),				
+			s = k.join(' '),
+			c = $.extend(true, {}, syllabus); //copy grading syllabus
+			
+		if( k.length > 1 ){
+		
+			var kumite_name = k[0],
+				set_name    = k[1],
+				set_array 	= c[b].kumite[kumite_name];
+
+			//remove selected kumite set
+			var index = set_array[0].indexOf(set_name);
+			
+			if (index > -1) {
+			  set_array[0].splice(index, 1);
+			}				
+			
+			console.log(set_array);
+			c[b].kumite[ kumite_name ][ set_name ] = set_array;
+		}
+		else {
+		
+			delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
+		}
+	
+		//re-assign syllabus next button
+		$('#kumite-next')
+			.data(c)
+			.show();
+		
+		console.log( s + " in " + r + "(s)");
+		window.setTimeout(speak, r * 1000, s);	
+		$(this).attr('disabled', true);
+	});	
+	
+	$('#kumite-next').click(function(){
+
+		var r = getRandomInt.apply(null, 
+									slider.noUiSlider.get().map(function(item) {
+																	return parseInt(item, 10);
+																})
+								  )||0,
+			c = $('#kumite-next').data(),	//syllabus stored in next button
+			b = "2nd Kyu",				
+			k = getRandomBeltKumite(c, b),				
+			s = k.join(' ');
+			
+		if( k.length > 1 ){
+		
+			var kumite_name = k[0],
+				set_name    = k[1],
+				set_array 	= c[b].kumite[kumite_name];
+
+			//remove selected kumite set
+			var index = set_array[0].indexOf(set_name);
+			
+			if (index > -1) {
+			  set_array[0].splice(index, 1);
+			}				
+			
+			if( !set_array[0].length ){
+			
+				delete c[b].kumite[ kumite_name ];
+			}
+		}
+		else {
+		
+			delete c[b].kumite[ k[0] ]; //remove selected kumite from belt
+		}
+		
+		//re-assign syllabus next button
+		$('#kumite-next').data(c);
+		
+		//hide next button if this is the last
+		if( !Object.keys(c[b].kumite).length ){
+		
+			$('#kumite-next').hide();
+		}
+		
+		console.log( s + " in " + r + "(s)");
+		window.setTimeout(speak, r * 1000, s);		 
+		$(this).attr('disabled', true);
+	});			
 });
 </script>
