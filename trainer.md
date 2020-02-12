@@ -56,18 +56,24 @@
 		</div>
 		<div class="row">
 			<div class="input-field col s12">
-				<textarea id="message" class="materialize-textarea"></textarea>
-				<label>Text To Speech</label>
+				<textarea id="message" class="materialize-textarea" readonly="true"></textarea>
+				<label></label>
 			</div>
 			<div class="col s6">	
 				<a href="#" id="kata" class="waves-effect waves-light btn">Kata Test</a>
+			</div>
+			<div class="col s6">		
+				<a href="#" id="kumite" class="waves-effect waves-light btn">Kumite Test</a>
+			</div>
+		</div>	
+		<div class="row">
+			<div class="col s6">	
 				<a href="#" id="kata-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
 			</div>
 			<div class="col s6">		
-				<a href="#" id="kumite"      class="waves-effect waves-light btn">Kumite Test</a>
 				<a href="#" id="kumite-next" class="waves-effect waves-light btn"><i class="material-icons left">navigate_next</i>Next</a>
 			</div>
-		</div>	
+		</div>			
 		<div class="row">
 			<div class="col s12">
 				<a href="#" id="speak" class="waves-effect waves-light btn">Speak/Repeat</a>	
@@ -421,7 +427,8 @@ $(function(){
 	
 	function speak(msg){
 	
-		$('#message').focus().val( msg );
+		//$('#message').focus().val( msg );
+		$('#message').val( msg );
 		$('#speak').trigger('click');
 	};
 	  
