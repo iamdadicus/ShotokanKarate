@@ -101,6 +101,32 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="nouislider.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.js"></script>
+<script>
+	// jQuery script to generate a QR-code to the current URL
+	$(document).ready(function(){
+		$('body').append($('<div/>',{
+			id:'qrCode'
+		}));
+		$('#qrCode').css({
+			position:'fixed',
+			top:'0px',
+			left:'0px',
+			zIndex: '9999',
+			padding: '20px',
+			backgroundColor: '#fff'
+		}).on('click',function(){
+			$(this).css('display','none');
+		}).qrcode({
+			render: "canvas", // or 'table'
+			width:200,
+			height:200,
+			background: "#ffffff",
+			foreground: "#000000",
+			text:window.location.href
+		});
+	});
+</script>
 <script>
 //use Google 粤語（香港）
 
