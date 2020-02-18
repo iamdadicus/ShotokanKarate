@@ -93,7 +93,7 @@
 
 <audio id="testAudio" hidden type="audio/mpeg"></audio>
 
-<img src="qr_code.png">
+<img src="qr-code.png" height="200px">
 
 <!-- Compiled and minified JavaScript -->
 <script
