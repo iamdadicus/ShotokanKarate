@@ -163,7 +163,7 @@ var phonetics = [
 		"set two",
 		"taikyo-ku-shodan",   
 		"tekki shodan",       
-		"uraken"
+		"uraken",
 		"jiin",
 		"jion",
 		"jitte"
