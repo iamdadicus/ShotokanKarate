@@ -164,6 +164,9 @@ var phonetics = [
 		"taikyo-ku-shodan",   
 		"tekki shodan",       
 		"uraken"
+		"jiin",
+		"jion",
+		"jitte"
 		],
 	syllabus = {
 /*
@@ -237,11 +240,34 @@ var phonetics = [
 		],
 		kumite : {
 			"kihon ippon" : [["set five", "set four", "set three", "set two", "set one"],["", "hidari", "migi"]],
-			"jiyu ippon"  : [["set two", "set one"],["", "hidari", "migi"]],
+			"jiyu ippon"  : [["set two", "set one"],["", "hidari", "migi"],["set two", "migi"]],
 			"gohon": false,
 			"sanbon" : false
 		},	
 		kata	: ["bassai dai"]
+	},
+	"1st Kyu" : {
+		belt	: "brown-red",
+		kihon	: [
+			"Mae-Geri, Sanbon-Zuki",
+			"Age-Uke, Uraken, Mae-Geri, Sanbon-Zuki",
+			"Soto-Uke, Yoko-Empi, Uraken, Gyaku-Zuki, Gedan-Barai",
+			"Uchi-Uke (Kokutsu Dachi), Kizami-Zuki, Gyaku-Zuki",
+			"Shuto-Uke, Kizami-Mawashi-Geri, Gyaku-Zuki, Gedan-Barai",
+			"Mae-Geri, Mawashi-Geri, Uraken, Gyaku-Zuki, Gedan-Barai",
+			"Mae-Geri, Kekomi, Shuto-Uchi, Gyaku-Zuki, Gedan-Barai",
+			"Yoko-Geri-Keage & Kekomi, Gyaku-Zuki, Gedan-Barai",			
+			"Kake-Uke, Ushiro-Geri, Mai-Geri",
+			"Kizami-Kekomi, Mae-Geri",
+			"Mae-Geri, Kekmomi, Mawashi-Geri"
+		],
+		kumite : {
+			"kihon ippon" : [["set five", "set four", "set three", "set two", "set one"],["", "hidari", "migi"]],
+			"jiyu ippon"  : [["set three", "set two", "set one"],["", "hidari", "migi"],{"set three":["migi"]}],
+			"gohon": false,
+			"sanbon" : false
+		},	
+		kata	: ["jiin", "jion", "jitte"]
 	}	
 };
 
@@ -260,14 +286,23 @@ function getRandomBeltKumite(data, belt){
 		kumite     = all_kumite[ random_no ],
 		sets       = data[belt].kumite[kumite];
 
+	/*
+		sets[0] : kimute
+		sets[1] : vocal options / variations
+		sets[3] : invalid vocal options
+	*/		
+
 	if( !sets ){
 		return [kumite];
 	}
 			
 	var random_set_no = getRandomInt( sets[0].length ),
-		option_no	  = getRandomInt( sets[1].length );
+		set_name      = sets[0][random_set_no],
+		filter        = (sets[2][set_name])||[],
+		options       = sets[1].filter(e => -1 != filter.indexOf(e)), //remove invalid vocal options
+		option_no	  = getRandomInt( options.length );
 		
-	return [kumite, sets[0][random_set_no], sets[1][option_no]];	
+	return [kumite, set_name, options[option_no]];	
 }
 
 //https://codepen.io/SteveJRobertson/pen/emGWaR
@@ -491,7 +526,7 @@ $(function(){
 																	return parseInt(item, 10);
 																})
 								  )||0,
-			b = "2nd Kyu",				
+			b = "1st Kyu",				
 			k = getRandomBeltKumite(syllabus, b),				
 			s = k.join(' '),
 			c = $.extend(true, {}, syllabus); //copy grading syllabus
