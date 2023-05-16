@@ -287,6 +287,14 @@ function getRandomBeltKumite(data, belt){
 		sets       = data[belt].kumite[kumite];
 
 	/*
+	console.log({
+		random_no: random_no,
+		all_kumite: all_kumite,
+		kumite: kumite,
+		sets: sets
+	});
+	*/
+	/*
 		sets[0] : kimute
 		sets[1] : vocal options / variations
 		sets[3] : invalid vocal options
@@ -298,10 +306,18 @@ function getRandomBeltKumite(data, belt){
 			
 	var random_set_no = getRandomInt( sets[0].length ),
 		set_name      = sets[0][random_set_no],
-		filter        = (sets[2][set_name])||[],
-		options       = sets[1].filter(e => -1 != filter.indexOf(e)), //remove invalid vocal options
+		filter        = ((sets[2]||{})[set_name])||[],
+		options       = sets[1].filter(e => -1 == filter.indexOf(e) ), //remove invalid vocal options
 		option_no	  = getRandomInt( options.length );
-		
+	/*	
+	console.log({
+		random_set_no: random_set_no,
+		set_name: set_name,
+		filter: filter,
+		options: options,
+		option_no: option_no
+	});
+	*/
 	return [kumite, set_name, options[option_no]];	
 }
 
@@ -570,7 +586,7 @@ $(function(){
 																})
 								  )||0,
 			c = $('#kumite-next').data(),	//syllabus stored in next button
-			b = "2nd Kyu",				
+			b = "1st Kyu",				
 			k = getRandomBeltKumite(c, b),				
 			s = k.join(' ');
 			
